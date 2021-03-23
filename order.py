@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from functools import total_ordering
 @total_ordering
 class Order :
@@ -17,7 +19,7 @@ class Order :
 
     def __str__(self):
         """human-readable content"""
-        return "%s @ %s"  % (self.quantity, self.price)
+        return "%s@%s" % (self.quantity, self.price)
 
     def __repr__(self):
         """unambiguous representation of the object"""

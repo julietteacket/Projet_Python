@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from order import Order
 
 
@@ -14,12 +15,14 @@ class Book:
         o.priority = self.nb_orders +1
         self.nb_orders += 1
         self.buy_orders.append(o)
-        
+        print("---Insert BUY " + str(o) + " id=" + str(o.priority) + " on " + self.name + "\n" + str(self))
+    
     def insert_sell(self, quantity, price):
         o = Order(quantity, price)
         o.priority = self.nb_orders + 1
         self.nb_orders += 1
         self.sell_orders.append(o)
+        print("--- Insert SELL " + str(o) + " id=" + str(o.priority) + " on " + self.name + "\n" + str(self))
     
     def sort_sell_orders(self):
         """ trie dans l'ordre croissant la liste des sell"""
@@ -43,6 +46,15 @@ class Book:
                     if self.buy_orders[j].priority > self.buy_orders[j+1].priority:
                         self.buy_orders[j],self.buy_orders[j+1] = self.buy_orders[j+1], self.buy_orders[j]
 
-    
+    def __str__(self):
+        affich = "Book on " + self.name + "\n"
+        self.sort_sell_orders()
+        for i in range(len(self.sell_orders)):
+            affich += "        SELL " + str(self.sell_orders[i]) + " id=" + str(self.sell_orders[i].priority) + "\n"
+        self.sort_buy_orders()
+        for j in range(len(self.buy_orders)):
+            affich += "        BUY " + str(self.buy_orders[j]) + " id=" + str(self.buy_orders[j].priority) + "\n"
+        affich += "---------------------------------"
+        return affich
 
 
