@@ -14,16 +14,24 @@ class Book:
         o = Order(quantity, price)
         o.priority = self.nb_orders +1
         self.nb_orders += 1
-        self.buy_orders.append(o)
-        print("---Insert BUY " + str(o) + " id=" + str(o.priority) + " on " + self.name + "\n" + str(self))
-    
+        print("---Insert BUY " + str(o) + " id=" + str(o.priority) + " on " + self.name)
+        restant = self.execute_buy_orders(quantity, price)
+        if restant != 0:
+            o.quantity = restant
+            self.buy_orders.append(o)
+        print(str(self))
+
     def insert_sell(self, quantity, price):
         o = Order(quantity, price)
         o.priority = self.nb_orders + 1
         self.nb_orders += 1
-        self.sell_orders.append(o)
-        print("--- Insert SELL " + str(o) + " id=" + str(o.priority) + " on " + self.name + "\n" + str(self))
-    
+        print("--- Insert SELL " + str(o) + " id=" + str(o.priority) + " on " + self.name)
+        restant = self.execute_sell_orders(quantity, price)
+        if restant != 0:
+            o.quantity = restant
+            self.sell_orders.append(o)
+        print(str(self))
+        
     def sort_sell_orders(self):
         """ trie dans l'ordre croissant la liste des sell"""
         n = len(self.sell_orders)
@@ -56,5 +64,36 @@ class Book:
             affich += "        BUY " + str(self.buy_orders[j]) + " id=" + str(self.buy_orders[j].priority) + "\n"
         affich += "---------------------------------"
         return affich
+
+    def execute_buy_orders(self, quantity, price):
+        """quand on ajoute un ordre buy, on regarde dans la liste des sell si on peut faire une transaction. On renvoie le nombre de buy qu'il reste"""
+        for i in range(len(self.sell_orders)):
+            if (self.sell_orders[i].price <= price) and (quantity>0):
+                evalable = min(quantity, self.sell_orders[i].quantity)
+                quantity = quantity - evalable 
+                self.sell_orders[i].quantity = self.sell_orders[i].quantity - evalable
+                print("Execute " + str(evalable) + " at " + str(self.sell_orders[i].price) + " on " + self.name)
+        new_sell_orders = []
+        for j in range(len(self.sell_orders)):
+            if self.sell_orders[j].quantity != 0 :
+                new_sell_orders.append(self.sell_orders[j])
+        self.sell_orders = new_sell_orders
+        return quantity 
+
+    def execute_sell_orders(self, quantity, price):
+        """quand on ajoute un ordre sell, on regarde dans la liste des buy si on peut faire une transaction. On renvoie le nombre de sell qu'il reste"""
+        for i in range(len(self.buy_orders)):
+            if (self.buy_orders[i].price >= price) and (quantity>0):
+                evalable = min(quantity, self.buy_orders[i].quantity)
+                quantity = quantity - evalable 
+                self.buy_orders[i].quantity = self.buy_orders[i].quantity - evalable
+                print("Execute " + str(evalable) + " at " + str(self.buy_orders[i].price) + " on " + self.name)
+        new_buy_orders = []
+        for j in range(len(self.buy_orders)):
+            if self.buy_orders[j].quantity != 0 :
+                new_buy_orders.append(self.buy_orders[j])
+        self.buy_orders = new_buy_orders
+        return quantity 
+    
 
 
