@@ -21,8 +21,28 @@ class Book:
         self.nb_orders += 1
         self.sell_orders.append(o)
     
-    #def sort_buy_orders
-    #def sort_sell_orders
+    def sort_sell_orders(self):
+        """ trie dans l'ordre croissant la liste des sell"""
+        n = len(self.sell_orders)
+        for i in range(n):
+            for j in range(0,n-i-1):
+                if self.sell_orders[j].price > self.sell_orders[j+1].price:
+                    self.sell_orders[j], self.sell_orders[j+1] = self.sell_orders[j+1], self.sell_orders[j]
+                if self.sell_orders[j].price == self.sell_orders[j+1].price:
+                    if self.sell_orders[j].priority > self.sell_orders[j+1].priority:
+                        self.sell_orders[j], self.sell_orders[j+1] = self.sell_orders[j+1], self.sell_orders[j]
+
+    def sort_buy_orders(self):
+        """trie dans l'ordre décroissant la liste des buy"""
+        n = len(self.buy_orders)
+        for i in range(n):
+            for j in range(0,n-i-1):
+                if self.buy_orders[j].price < self.buy_orders[j+1].price:
+                    self.buy_orders[j], self.buy_orders[j+1] = self.buy_orders[j+1], self.buy_orders[j]
+                if self.buy_orders[j].price ==self.buy_orders[j+1].price:
+                    if self.buy_orders[j].priority > self.buy_orders[j+1].priority:
+                        self.buy_orders[j],self.buy_orders[j+1] = self.buy_orders[j+1], self.buy_orders[j]
+
     
 
 
