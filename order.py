@@ -1,12 +1,12 @@
 from functools import total_ordering
-
 @total_ordering
 class Order :
-    def __init__(self, quantity, price,side=True):
+    def __init__(self, quantity, price, priority =0):
         """side = True if it's a buy"""
         self.quantity = quantity
         self.price = price
-        self.side = side
+        self.priority = priority
+        #self.side = side
 
     def is_sell(self):
         #returns False (= not buy) is sell order
