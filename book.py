@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from order import Order
-
+import pandas as pd
 
 class Book:
     def __init__(self, name, buy_orders = [], sell_orders = [], nb_orders = 0):
         """buy_orders and sell_orders are lists"""
         self.name = name
         self.buy_orders = buy_orders
-        self.sell_orders = sell_orders 
+        self.sell_orders = sell_orders
         self.nb_orders = len(self.buy_orders) + len(self.sell_orders)
 
     def insert_buy(self, quantity, price):
@@ -20,7 +20,9 @@ class Book:
             o.quantity = restant
             self.buy_orders.append(o)
         print(str(self))
-
+        dataframe = self.create_dataframe()
+        print(dataframe)
+        
     def insert_sell(self, quantity, price):
         o = Order(quantity, price)
         o.priority = self.nb_orders + 1
@@ -31,7 +33,10 @@ class Book:
             o.quantity = restant
             self.sell_orders.append(o)
         print(str(self))
+        dataframe = self.create_dataframe()
+        print(dataframe)
         
+
     def sort_sell_orders(self):
         """ trie dans l'ordre croissant la liste des sell"""
         n = len(self.sell_orders)
@@ -70,7 +75,7 @@ class Book:
         for i in range(len(self.sell_orders)):
             if (self.sell_orders[i].price <= price) and (quantity>0):
                 evalable = min(quantity, self.sell_orders[i].quantity)
-                quantity = quantity - evalable 
+                quantity = quantity - evalable
                 self.sell_orders[i].quantity = self.sell_orders[i].quantity - evalable
                 print("Execute " + str(evalable) + " at " + str(self.sell_orders[i].price) + " on " + self.name)
         new_sell_orders = []
@@ -78,14 +83,14 @@ class Book:
             if self.sell_orders[j].quantity != 0 :
                 new_sell_orders.append(self.sell_orders[j])
         self.sell_orders = new_sell_orders
-        return quantity 
+        return quantity
 
     def execute_sell_orders(self, quantity, price):
         """quand on ajoute un ordre sell, on regarde dans la liste des buy si on peut faire une transaction. On renvoie le nombre de sell qu'il reste"""
         for i in range(len(self.buy_orders)):
             if (self.buy_orders[i].price >= price) and (quantity>0):
                 evalable = min(quantity, self.buy_orders[i].quantity)
-                quantity = quantity - evalable 
+                quantity = quantity - evalable
                 self.buy_orders[i].quantity = self.buy_orders[i].quantity - evalable
                 print("Execute " + str(evalable) + " at " + str(self.buy_orders[i].price) + " on " + self.name)
         new_buy_orders = []
@@ -93,7 +98,20 @@ class Book:
             if self.buy_orders[j].quantity != 0 :
                 new_buy_orders.append(self.buy_orders[j])
         self.buy_orders = new_buy_orders
-        return quantity 
-    
+        return quantity
 
+    def create_dataframe(self):
+        df = pd.DataFrame(columns=['Priority','Type','Price','Quantity'])
+        for i in range (len(self.buy_orders)):
+            df.loc[i] = [self.buy_orders[i].priority,"Buy", self.buy_orders[i].price, self.buy_orders[i].quantity] 
+        for j in range(len(self.buy_orders),len(self.buy_orders)+len(self.sell_orders)):
+            df.loc[j] = [self.sell_orders[j-len(self.buy_orders)].priority,"Sell", self.sell_orders[j-len(self.buy_orders)].price, self.sell_orders[j-len(self.buy_orders)].quantity] 
+        return df
+        
+ 
+
+
+
+
+    
 
